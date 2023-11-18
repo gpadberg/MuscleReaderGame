@@ -26,6 +26,9 @@ app.get('/run-python', (req, res) => {
       console.error(stderr);
       return res.status(500).send('Error running script ${stderr}');
     }
+    console.log("Command sent: " + req.query.command)
+
+    // Send to the python script
     res.send(stdout);
   });
 });

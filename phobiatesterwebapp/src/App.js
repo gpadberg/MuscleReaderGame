@@ -156,8 +156,6 @@ function App() {
       }
     };
 
-
-
   return (
     <div>
       <button onClick={() => handleRunPythonScript('reset')}>
