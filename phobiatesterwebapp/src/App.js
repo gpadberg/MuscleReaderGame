@@ -166,8 +166,8 @@ function App() {
         Advance
       </button>
       <span><br></br></span>
-      <button onClick={() => handleRunPythonScript('calculate')}>
-        Compute
+      <button onClick={() => handleRunPythonScript('display')}>
+        Display
       </button>
       <div>Python Script Output: {pythonOutput}</div>
       <span><br></br></span>
