@@ -9,6 +9,7 @@ import WhatsNextPage from './components/WhatsNextPage';
 import PhobiaDefinitions from './components/PhobiaDefinitions';
 import AboutUs from './components/AboutUs';
 import ImageChanger from './components/ImageChanger';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 function App() {
 
@@ -17,10 +18,32 @@ function App() {
   const [about, setAbout] = useState(false)
   const [next, setNext] = useState(false)
   const [start, setStart] = useState(false)
+  // Set the socketURL, messageHistory and 
+  const [socketUrl, setSocketUrl] = React.useState('ws://localhost:8080'); // Your WebSocket server URL
+  // Variable to store the python output
+  const [pythonOutput, setPythonOutput] = React.useState('');
+
+  const handleRunPythonScript = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/run-python'); 
+      const data = await response.text();
+      console.log('Python script output:', data);
+      setPythonOutput(data); // Set the Python output
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
     <div className="App">
       <div class="bg-black text-white min-h-screen">
+      <div>
+      <button onClick={handleRunPythonScript}>
+        Run Python File
+      </button>
+      <br></br>
+      <div>Python Script Output: {pythonOutput}</div>
+    </div>
         {start ? <ImageChanger /> : <>
         <div class="flex justify-between w-full px-96 pt-8">
         <a href="#" onClick={()=> {setLanding(true); setDefs(false); setAbout(false); setNext(false)}} class="text-white mb-2">Home</a>
