@@ -1,11 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from serialSignalTranslator import SimpleSerial
+import serial.tools.list_ports as stlp
 
 from scipy.signal import butter , sosfilt , find_peaks
 from sys import argv
 
-portName = "COM3"
+portName = stlp.comports()[0].name # attempt port scanning
 fileName = "output.txt"
 
 def calculateBPM(signalVals, timeVals):
