@@ -21,11 +21,14 @@ wss.on('connection', (ws) => {
 
 // HTTP endpoint to run Python script
 app.get('/run-python', (req, res) => {
-  exec('python3 ../testpython/randgen.py', (err, stdout, stderr) => {
+  exec('python3 ../testpython/randgen.py '+ req.query.command, (err, stdout, stderr) => {
     if (err) {
       console.error(stderr);
       return res.status(500).send('Error running script ${stderr}');
     }
+    console.log("Command sent: " + req.query.command)
+
+    // Send to the python script
     res.send(stdout);
   });
 });
