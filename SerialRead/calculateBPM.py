@@ -1,63 +1,53 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from serialSignalTranslator import SimpleSerial
-import cmd
-import math
+
 from scipy.signal import butter , sosfilt , find_peaks
+from sys import argv
 
-phobiaLdb = {}
-serialObj = SimpleSerial(115200, "/dev/cu.usbmodem141301")
-completekey = 0
+portName = "COM3"
+fileName = "output.txt"
 
-class calculateBPM(cmd.Cmd):
-    def calculateBPM(self, signalVals, timeVals):
+def calculateBPM(signalVals, timeVals):
+    unPeaks = find_peaks(signalVals, height = 900)
+    fullHeartB = len(unPeaks[0])
 
-        unPeaks = find_peaks(signalVals, height = 900)
-        fullHeartB = len(unPeaks[0])
+    '''
+    for i in range(len(signalVals)):
+        try:
+            if signalVals[i+1] == 0 and signalVals[i] == 1:
+                fullHeartB += 1
+                # print('added half beat')
+        except:
+            pass
+    '''
 
-        '''
-        for i in range(len(signalVals)):
-            try:
-                if signalVals[i+1] == 0 and signalVals[i] == 1:
-                    fullHeartB += 1
-                    # print('added half beat')
-            except:
-                pass
-        '''
+    BPM = round(fullHeartB / (max(timeVals) / 1000) * 60)
+    
+    # print('The current BPM is:', BPM)
+    return BPM
 
-        BPM = round(fullHeartB / (max(timeVals) / 1000) * 60)
+def do_generateBPM():
+
+    working = False
+    while not working:
+        try:
+            serialObj = SimpleSerial(115200, portName)
+            valueList, timeStampList = serialObj.captureLines(10000)
+            if len(valueList)==0 or len(timeStampList)==0:
+                print("failed")
+                raise Exception
+            else:
+                working = True
+        except: 
+            pass
+    
+
+    bpmVal = calculateBPM(valueList, timeStampList)
+    with open(fileName, "a") as myfile:
+        myfile.write(f"{bpmVal}\n")
+    return
         
-        # print('The current BPM is:', BPM)
-        return BPM
-
-    def do_generateBPM(self, line):
-
-        working = False
-        while not working:
-            try:
-                valueList, timeStampList = serialObj.captureLines(10000)
-                if len(valueList)==0 or len(timeStampList)==0:
-                    raise Exception
-                else:
-                    working = True
-            except: 
-                pass
-        
-
-        phobiaLdb[len(phobiaLdb)] = self.calculateBPM(valueList, timeStampList)
-
-        return
-        
-    def do_rankBPM(self, line):
-
-        # print(phobiaLdb)
-
-        temp = sorted(phobiaLdb.keys(), key = phobiaLdb.get, reverse=True)
-
-        for bpm in temp:
-            print('{} {}'.format(phobiaLdb[bpm], bpm)+'\n')
-        
-        return
 
     # make graph
     '''
@@ -70,8 +60,10 @@ class calculateBPM(cmd.Cmd):
     '''
 
 if __name__ == "__main__":
-    app = calculateBPM()
-
-    app.cmdloop()
-
-    pass
+    argVal = argv[1]
+    if argVal == "reset":
+        with open(fileName, "w") as myFile:
+            pass # empties the file
+    elif argVal == "advance":
+        print("start Advance")
+        do_generateBPM() # writes a new line with new bpm to the file
