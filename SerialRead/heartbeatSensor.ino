@@ -40,7 +40,9 @@ void loop() {
     	// Get peak
     	peak = Getpeak(signal);
     	// Print sensor_value and peak
-    	Serial.print(peak);
+    	//Serial.print(peak);
+    	//Serial.print(",");
+    	Serial.print(sensor_value);
     	Serial.print(",");
     	Serial.println(millis());
     	// Blink LED on peak
