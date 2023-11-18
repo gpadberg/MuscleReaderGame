@@ -17,13 +17,12 @@ const ImageChanger = () => {
 
   const record = (phobia) => {
     let avgBpm;
-    // receive Data for five seconds
-
+    // send signal to receive data (simulated by timeout)
     const timeout = setTimeout(() => {
+      // receive data
       console.log("finished");
-    }, 5000);
-
-    setTests((tests) => [...tests, { name: phobia, avgBpm }]);
+      setTests((tests) => [...tests, { name: phobia, avgBpm }]);
+    }, 6000);
   };
 
   useEffect(() => {
@@ -33,7 +32,7 @@ const ImageChanger = () => {
         setStart(false);
         setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
         setChangeCount((prevCount) => prevCount + 1);
-      }, 5000);
+      }, 6000);
 
       return () => clearTimeout(timeout);
     } else if (changeCount === 6) {
