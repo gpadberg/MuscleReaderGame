@@ -23,14 +23,16 @@ class SimpleSerial:
 
         # set under while not done loop
         # break if done
+
         try:
+            # print('trying')
             with self.ser as ser:
                 timeStamp = 0
                 while timeStamp < timeInterval:
                     point = ser.readline().split(b',')
                     # print(point)
-                    valueList.append(int(point[0]))
-                    timeStamp = int(point[1].split(b"\r")[0])
+                    valueList.append(float(point[0]))
+                    timeStamp = float(point[1].split(b"\r")[0])
                     timeStampList.append(timeStamp)
         except:
             pass
@@ -40,5 +42,5 @@ class SimpleSerial:
 if __name__ == "__main__":
     sampleRawData = SimpleSerial(115200,"/dev/cu.usbmodem141301")
 
-    # print(sampleRawData.captureLines(4000)[0])
+    print(sampleRawData.captureLines(5000)[0])
     pass

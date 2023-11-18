@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from serialSignalTranslator import SimpleSerial
 import cmd
 import math
+from scipy.signal import butter , sosfilt , find_peaks
 
 phobiaLdb = {}
 serialObj = SimpleSerial(115200, "/dev/cu.usbmodem141301")
@@ -10,7 +11,11 @@ completekey = 0
 
 class calculateBPM(cmd.Cmd):
     def calculateBPM(self, signalVals, timeVals):
-        fullHeartB = 0
+
+        unPeaks = find_peaks(signalVals, height = 900)
+        fullHeartB = len(unPeaks[0])
+
+        '''
         for i in range(len(signalVals)):
             try:
                 if signalVals[i+1] == 0 and signalVals[i] == 1:
@@ -18,14 +23,25 @@ class calculateBPM(cmd.Cmd):
                     # print('added half beat')
             except:
                 pass
+        '''
 
         BPM = round(fullHeartB / (max(timeVals) / 1000) * 60)
-
+        
+        # print('The current BPM is:', BPM)
         return BPM
 
     def do_generateBPM(self, line):
 
-        valueList, timeStampList = serialObj.captureLines(10000)
+        working = False
+        while not working:
+            try:
+                valueList, timeStampList = serialObj.captureLines(10000)
+                if len(valueList)==0 or len(timeStampList)==0:
+                    raise Exception
+                else:
+                    working = True
+            except: 
+                pass
         
 
         phobiaLdb[len(phobiaLdb)] = self.calculateBPM(valueList, timeStampList)
@@ -34,7 +50,7 @@ class calculateBPM(cmd.Cmd):
         
     def do_rankBPM(self, line):
 
-        print(phobiaLdb)
+        # print(phobiaLdb)
 
         temp = sorted(phobiaLdb.keys(), key = phobiaLdb.get, reverse=True)
 
