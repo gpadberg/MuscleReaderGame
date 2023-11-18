@@ -15,37 +15,30 @@ class SimpleSerial:
         serObj.baudrate = self.baudrate
         serObj.port = self.port
         return serObj
-    
-    def _postProcess(self, rawData):
-        # binary data in a string
-        """Overwrite in subclasses to post process data"""
-        # Mess around with this area 
-        cleanList = []
-        for dataPoint in rawData:
-            sample = dataPoint.split(b',')
-            print(sample)
-            #value = float(sample[0])
-            #time = int(sample[1])
-
-            # print('value {}, time {}'.format(value, time))
-            #cleanList.append([value, time])
-        # print(cleanList)
-
-        return cleanList
 
     def captureLines(self, timeInterval = None):
         """Records lines from serial port into a list"""
-        cleanData = []
-        with self.ser as ser:
-            timeStamp = 0
-            while timeStamp < timeInterval:
-                point = ser.readline().split(b',')
-                value = int(point[0])
-                timeStamp = int(point[1].split(b"\r")[0])
-                cleanData.append([value, timeStamp])
-        return cleanData
+        valueList = []
+        timeStampList = []
+
+        # set under while not done loop
+        # break if done
+        try:
+            with self.ser as ser:
+                timeStamp = 0
+                while timeStamp < timeInterval:
+                    point = ser.readline().split(b',')
+                    # print(point)
+                    valueList.append(int(point[0]))
+                    timeStamp = int(point[1].split(b"\r")[0])
+                    timeStampList.append(timeStamp)
+        except:
+            pass
+
+        return valueList, timeStampList
     
 if __name__ == "__main__":
-    sampleRawData = SimpleSerial(115200,"/dev/cu.usbmodem141301").captureLines(5000)
-    print(sampleRawData)
+    sampleRawData = SimpleSerial(115200,"/dev/cu.usbmodem141301")
+
+    # print(sampleRawData.captureLines(4000)[0])
     pass
