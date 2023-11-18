@@ -7,12 +7,14 @@ import TestInterface from './components/TestInterface';
 import ResultsPage from './components/ResultsPage';
 import WhatsNextPage from './components/WhatsNextPage';
 import PhobiaDefinitions from './components/PhobiaDefinitions';
+import AboutUs from './components/AboutUs';
 import ImageChanger from './components/ImageChanger';
 
 function App() {
 
   return (
     <div className="App">
+      <AboutUs/>
       <ResultsPage/>
       <StartPage />
       <ImageChanger />
