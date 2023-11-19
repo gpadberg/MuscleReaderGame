@@ -63,7 +63,7 @@ const ImageChanger = () => {
         setStart(false);
         setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
         setChangeCount((prevCount) => prevCount + 1);
-      }, 1000);
+      }, 6000);
 
       return () => clearTimeout(timeout);
     } else if (changeCount === 6) {

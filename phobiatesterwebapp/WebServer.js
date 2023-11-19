@@ -1,6 +1,6 @@
 const WebSocket = require("ws");
 const express = require("express");
-const { exec } = require("child_process");
+const { execSync, exec } = require("child_process");
 const app = express();
 
 // To allow reference between ports
@@ -20,7 +20,8 @@ wss.on("connection", (ws) => {
 
 // HTTP endpoint to run Python script
 app.get("/run-python", (req, res) => {
-  exec(
+  if (req.query.command == "advance"){
+  execSync(
     "python ../SerialRead/sampleScript.py " + req.query.command,
     (err, stdout, stderr) => {
       if (err) {
@@ -32,7 +33,21 @@ app.get("/run-python", (req, res) => {
       // Send to the python script
       res.send(stdout);
     }
-  );
+  )} else{exec(
+    "python ../SerialRead/sampleScript.py " + req.query.command,
+    (err, stdout, stderr) => {
+      if (err) {
+        console.error(stderr);
+        return res.status(500).send("Error running script ${stderr}");
+      }
+      console.log("Command sent: " + req.query.command);
+
+      // Send to the python script
+      res.send(stdout);
+    }
+  )
+
+  };
 });
 
 // Create an HTTP server
